@@ -56,17 +56,22 @@ public class TicketService {
         Train train=op1.get();
         String route= train.getRoute();
         String str[]=route.split(".");
+        int startExist=route.indexOf(String.valueOf(bookTicketEntryDto.getFromStation()));
+        int endExist=route.indexOf(String.valueOf(bookTicketEntryDto.getToStation()));
+        if(startExist==-1 || endExist==-1){
+            throw new Exception("Invalid stations");
+        }
         boolean flag=false;
         int count=0;
         int startIndex=0;
         int endIndex=0;
         List<Ticket> ticketList=train.getBookedTickets();
         for(int i=0;i<str.length;i++){
-            if(!flag && str[i].equals(bookTicketEntryDto.getFromStation())){flag=true;startIndex=i;}
-            if(str[i].equals(bookTicketEntryDto.getToStation())){endIndex=i;break;}
+            if(!flag && str[i].equals(String.valueOf(bookTicketEntryDto.getFromStation()))){flag=true;startIndex=i;}
+            if(str[i].equals(String.valueOf(bookTicketEntryDto.getToStation()))){endIndex=i;break;}
             if(flag){
                 for(Ticket x: ticketList){
-                    if(x.getFromStation().equals(str[i])){
+                    if((String.valueOf(x.getFromStation())).equals(str[i])){
                         count+=x.getPassengersList().size();
                     }
                 }

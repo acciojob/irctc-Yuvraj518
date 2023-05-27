@@ -56,11 +56,11 @@ public class TrainService {
         int count=0;
         List<Ticket> ticketList=train.getBookedTickets();
         for(int i=0;i<str.length;i++){
-            if(!flag && str[i].equals(seatAvailabilityEntryDto.getFromStation())){flag=true;}
-            if(str[i].equals(seatAvailabilityEntryDto.getToStation())){break;}
+            if(!flag && str[i].equals(String.valueOf(seatAvailabilityEntryDto.getFromStation()))){flag=true;}
+            if(str[i].equals(String.valueOf(seatAvailabilityEntryDto.getToStation()))){break;}
             if(flag){
                 for(Ticket x: ticketList){
-                    if(x.getFromStation().equals(str[i])){
+                    if((String.valueOf(x.getFromStation())).equals(str[i])){
                         count+=x.getPassengersList().size();
                     }
                 }
