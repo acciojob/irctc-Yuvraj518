@@ -114,7 +114,7 @@ public class TrainService {
         //in problem statement)
         //You can also assume the seconds and milli seconds value will be 0 in a LocalTime format.
         List<Train> getList=trainRepository.getListOfTrainBeteenTime(station,startTime,endTime);
-        List<Integer> list=newArrayList<>();
+        List<Integer> list=new ArrayList<>();
         for(Train x: getList){ list.add(x.getTrainId());}
         return list;
     }
