@@ -94,6 +94,7 @@ public class TrainService {
         int maxAge=0;
         Train train=trainRepository.findById(trainId).get();
         List<Ticket> ticketsList=train.getBookedTickets();
+        if(ticketsList.size()==0){return 0;}
         for(Ticket x: ticketsList){
             List<Passenger> passengerList=x.getPassengersList();
             for(Passenger xx: passengerList){
