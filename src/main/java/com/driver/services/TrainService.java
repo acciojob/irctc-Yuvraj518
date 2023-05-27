@@ -26,7 +26,17 @@ public class TrainService {
         //and route String logic to be taken from the Problem statement.
         //Save the train and return the trainId that is generated from the database.
         //Avoid using the lombok library
-        return null;
+        String route="";
+        for(Station x: trainEntryDto.getStationRoute()){
+            route+=(x+".");
+        }
+        route=route.substring(0,route.length()-1);
+        Train train=new Train();
+        train.setRoute(route);
+        train.setDepartureTime(trainEntryDto.getDepartureTime());
+        train.setNoOfSeats(trainEntryDto.getNoOfSeats());
+        Train savedTrain=trainRepository.save(train);
+        return savedTrain.getTrainId();
     }
 
     public Integer calculateAvailableSeats(SeatAvailabilityEntryDto seatAvailabilityEntryDto){
@@ -39,8 +49,24 @@ public class TrainService {
         //even if that seat is booked post the destStation or before the boardingStation
         //Inshort : a train has totalNo of seats and there are tickets from and to different locations
         //We need to find out the available seats between the given 2 stations.
-
-       return null;
+        Train train=trainRepository.findById(seatAvailabilityEntryDto.getTrainId()).get();
+        String route= train.getRoute();
+        String str[]=route.split(".");
+        boolean flag=false;
+        int count=0;
+        List<Ticket> ticketList=train.getBookedTickets();
+        for(int i=0;i<str.length;i++){
+            if(!flag && str[i].equals(seatAvailabilityEntryDto.getFromStation())){flag=true;}
+            if(str[i].equals(seatAvailabilityEntryDto.getToStation())){break;}
+            if(flag){
+                for(Ticket x: ticketList){
+                    if(x.getFromStation().equals(str[i])){
+                        count+=x.getPassengersList().size();
+                    }
+                }
+            }
+        }
+       return train.getNoOfSeats()-count;
     }
 
     public Integer calculatePeopleBoardingAtAStation(Integer trainId,Station station) throws Exception{
@@ -49,9 +75,15 @@ public class TrainService {
         //if the trainId is not passing through that station
         //throw new Exception("Train is not passing from this station");
         //  in a happy case we need to find out the number of such people.
-
-
-        return 0;
+        Train train=trainRepository.findById(trainId).get();
+        List<Ticket> tickets=train.getBookedTickets();
+        int getTotal=0;
+        for(Ticket x: tickets){
+            if(x.getFromStation().equals(station)){
+                getTotal+=x.getPassengersList().size();
+            }
+        }
+        return getTotal;
     }
 
     public Integer calculateOldestPersonTravelling(Integer trainId){
@@ -59,8 +91,18 @@ public class TrainService {
         //Throughout the journey of the train between any 2 stations
         //We need to find out the age of the oldest person that is travelling the train
         //If there are no people travelling in that train you can return 0
-
-        return 0;
+        int maxAge=0;
+        Train train=trainRepository.findById(trainId).get();
+        List<Ticket> ticketsList=train.getBookedTickets();
+        for(Ticket x: ticketsList){
+            List<Passenger> passengerList=x.getPassengersList();
+            for(Passenger xx: passengerList){
+                if(xx.getAge()>maxAge){
+                    maxAge=xx.getAge();
+                }
+            }
+        }
+        return maxAge;
     }
 
     public List<Integer> trainsBetweenAGivenTime(Station station, LocalTime startTime, LocalTime endTime){
@@ -70,7 +112,7 @@ public class TrainService {
         //You can assume that the date change doesn't need to be done ie the travel will certainly happen with the same date (More details
         //in problem statement)
         //You can also assume the seconds and milli seconds value will be 0 in a LocalTime format.
-
+        List<Train> getList=trainRepository.getListOfTrainBeteenTime(station,startTime,endTime);
         return null;
     }
 
